@@ -8,9 +8,9 @@ require_once "clases/conexion.php";
     <title>SIS-MEDinet</title>
     <?php require_once "scripts.php";?>
     <link rel="shorcut icon" type="image/x icon" href="imagenes/medinet.ico">
-    <link rel="stylesheet" type="text/css" href="librerias/css/jquery.autocomplete.css">
-    <script type="text/javascript" src="librerias/js/jquery.js"></script>
-    <script type='text/javascript' src='librerias/js/jquery.autocomplete.js'></script>
+    <link rel="stylesheet" type="text/css" href="../librerias/css/jquery.autocomplete.css">
+    <script type="text/javascript" src="../librerias/js/jquery.js"></script>
+    <script type='text/javascript' src='../librerias/js/jquery.autocomplete.js'></script>
 </head>
 
 <body>

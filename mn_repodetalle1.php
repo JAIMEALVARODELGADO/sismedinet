@@ -25,6 +25,53 @@ require_once "clases/conexion.php";
                     <div class="card-header">
                         <h4>Captura de Medicamentos</h4>
                     </div>
+                    <!--                  -->
+                    <div>
+                        <table class="table table-hover table-sm table-bordered font13" id="tablaparametros">
+                            <thead style="background-color: #62748E; color: white; font-weight: bold;">
+                                <tr>
+                                    <td align="center">Factura</td>
+                                    <td align="center">Fecha</td>
+                                    <td align="center">Operación</td>
+                                    <td align="center">IUM Niv 1</td>
+                                    <td align="center">IUM Niv 2</td>
+                                    <td align="center">IUM Niv 3</td>
+                                    <td align="center">Expediente</td>
+                                    <td></td>
+                                </tr>
+                            </thead>
+
+                            <tbody style="background-color: white">
+                                <tr>
+                                    <td align="center"><input id="factura_" name="factura_" type="text" size="10"></td>
+                                    <td align="center"><input id="fecha_" name="fecha_" type="date"></td>
+                                    <td align="center">
+                                        <select id="operacion_" name="operacion_">
+                                            <option value=''></option>
+                                            <?php
+                                            $sqlOpera="SELECT codi_det,descripcion_det FROM vw_tpoperacion ORDER BY codi_det";
+                                            $resultOpera=mysqli_query($conexion,$sqlOpera);
+                                            while($rowOpera=mysqli_fetch_array($resultOpera)){
+                                                echo "<option value='$rowOpera[codi_det]'>$rowOpera[descripcion_det]</option>";
+                                            }
+                                            ?>
+                                        </select>
+                                    </td>
+                                    <td align="center"><input id="iumN1_" name="iumN1_" type="text" size="10"></td>
+                                    <td align="center"><input id="iumN2_" name="iumN2_" type="text" size="10"></td>
+                                    <td align="center"><input id="iumN3_" name="iumN3_" type="text" size="10"></td>
+                                    <td align="center"><input id="expediente_" name="expediente_" type="text" size="10"></td>
+                                    <td align="center">
+                                        <span class="btn btn-primary" title="Filtrar" onclick="filtrar()" id="btn_filtrar"> <i class="fas fa-search"></i></span>
+                                    </td>
+                                </tr>
+                            </tbody>
+                            
+                        </table>
+                    </div>
+                    <!--                  -->
+
+
                     <div class="card-body">
                         <span class="btn btn-secondary openBtn" data-toggle="modal" data-target="#nuevodetalle" title="Agrega Nuevo Registro">
                             Nuevo <span class="fas fa-plus-circle"></span>
@@ -390,4 +437,24 @@ require_once "clases/conexion.php";
             $("#exped_consec_detU").val(data[2]);
         });
     });
+
+    function filtrar(){
+        var factura_ = document.getElementById("factura_").value;
+        var fecha_ = document.getElementById("fecha_").value;
+        var operacion_ = document.getElementById("operacion_").value;
+        var iumN1_ = document.getElementById("iumN1_").value;
+        var iumN2_ = document.getElementById("iumN2_").value;
+        var iumN3_ = document.getElementById("iumN3_").value;
+        var iumN3_ = document.getElementById("iumN3_").value;
+        var expediente_ = document.getElementById("expediente_").value;
+        var url="tabladetalle.php?factura_="+factura_
+        +"&fecha_="+fecha_
+        +"&operacion_="+operacion_
+        +"&iumN1_="+iumN1_
+        +"&iumN2_="+iumN2_
+        +"&iumN3_="+iumN3_
+        +"&expediente_="+expediente_;
+
+        $("#tablaDatadetalle").load(url);
+    }
 </script>

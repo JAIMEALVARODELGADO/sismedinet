@@ -3,6 +3,35 @@ session_start();
 //Aqui evito la utilizacion de cache con fines de refrescar tablas
 header("Cache-Control: no-cache, must-revalidate"); // HTTP/1.1
 header("Expires: Sat, 1 Jul 2000 05:00:00 GMT"); // Fecha en el pasado
+$condicion = "id_reporte='$_SESSION[gid_reporte]'";
+
+if(isset($_GET['factura_']) and $_GET['factura_'] != ""){
+	$condicion = $condicion." AND numerofact_det = '$_GET[factura_]'";
+}
+
+if(isset($_GET['fecha_']) and $_GET['fecha_'] != ""){
+	$condicion = $condicion." AND fechafact_det = '$_GET[fecha_]'";
+}
+
+if(isset($_GET['operacion_']) and $_GET['operacion_'] != ""){
+	$condicion = $condicion." AND tipo_operacion_det = '$_GET[operacion_]'";
+}
+
+if(isset($_GET['iumN1_']) and $_GET['iumN1_'] != ""){
+	$condicion = $condicion." AND iumnivel1_det = '$_GET[iumN1_]'";
+}
+
+if(isset($_GET['iumN2_']) and $_GET['iumN2_'] != ""){
+	$condicion = $condicion." AND iumnivel2_det = '$_GET[iumN2_]'";
+}
+
+if(isset($_GET['iumN3_']) and $_GET['iumN3_'] != ""){
+	$condicion = $condicion." AND iumnivel3_det = '$_GET[iumN3_]'";
+}
+
+if(isset($_GET['expediente_']) and $_GET['expediente_'] != ""){
+	$condicion = $condicion." AND expediente_det = '$_GET[expediente_]'";
+}
 
 require_once "clases/conexion.php";
 require("procesos/mn_funciones.php");
@@ -14,7 +43,9 @@ $consfecha=mysqli_query($conexion,$consfecha);
 $rowfecha=mysqli_fetch_row($consfecha);
 $fecha_ini=$rowfecha[0];
 $fecha_fin=$rowfecha[1];
-$sql="SELECT id_detalle,id_reporte,numerofact_det,fechafact_det,tipo_operacion_desc,tipo_transaccion_desc,iumnivel1_det,iumnivel2_det,iumnivel3_det,expediente_det,exped_consec_det,unidad_desc,cantidad_det,valor_unit_det,total FROM vw_reporte_detalle_tot WHERE id_reporte='$_SESSION[gid_reporte]'";
+$sql="SELECT id_detalle,id_reporte,numerofact_det,fechafact_det,tipo_operacion_desc,tipo_transaccion_desc,iumnivel1_det,iumnivel2_det,iumnivel3_det,expediente_det,exped_consec_det,unidad_desc,cantidad_det,valor_unit_det,total 
+FROM vw_reporte_detalle_tot 
+WHERE $condicion";
 //echo "<br>".$sql;
 $result=mysqli_query($conexion,$sql);
 

@@ -268,6 +268,10 @@ require_once "clases/conexion.php";
 <script type="text/javascript">
     $(document).ready(function(){
         $("#btnNuevo").click(function(){
+            /* Aqui valido si el medicamento existe*/
+            validarMedicamento();
+
+
             $('#fechafact_det').val($('#fechafact').val());            
             fechafac_=new Date($('#fechafact').val());
             fechaini_=new Date($('#fecha_ini').val());
@@ -277,7 +281,7 @@ require_once "clases/conexion.php";
                 $.ajax({
                     type:"POST",
                     data:datos,
-                    url:"procesos/agregardetalle.php",
+                    url:"_procesos/agregardetalle.php",
                     success:function(r){
                         if(r==1){
                             alertify.success("Registro guardado");
@@ -355,6 +359,70 @@ require_once "clases/conexion.php";
 
             });
     }
+
+    async function validarMedicamento(){
+        var codigo_ium = document.getElementById("iumnivel1_det").value +
+                        document.getElementById("iumnivel2_det").value +
+                        document.getElementById("iumnivel3_det").value;
+        if (codigo_ium.trim() === '' || codigo_ium === null || codigo_ium ==='000') {
+            alert("El codigo no se guarda")
+            return true;
+        }
+        try {
+            var opcion = 'consultar_ium';
+            const url = 'procesos/crud_repodetalle.php?opcion=' + opcion +
+                        '&codigo_ium=' + codigo_ium;
+
+            const respuesta = await fetch(url);
+            const datos = await respuesta.json();
+
+            if (datos === null && confirm("El código IUM no existe. ¿Desea crearlo?")) {
+                guardarNuevoMedicamento();
+                return null;
+            }
+        
+        } catch (error) {
+            console.error('Error:', error);
+            return null;
+        }
+    }
+
+    async function guardarNuevoMedicamento(){
+    let nombre_ium = document.getElementById("medicamento_ium").value;
+    let codigo_ium = document.getElementById("iumnivel1_det").value +
+                    document.getElementById("iumnivel2_det").value + 
+                    document.getElementById("iumnivel3_det").value;
+    let iumnivel1_det = document.getElementById("iumnivel1_det").value;
+    let iumnivel2_det = document.getElementById("iumnivel2_det").value;
+    let iumnivel3_det = document.getElementById("iumnivel3_det").value;
+    
+    try {
+        // Crear el objeto FormData
+        const formData = new FormData();
+        formData.append('opcion', 'nuevo_ium');
+        formData.append('nombre_ium', nombre_ium);
+        formData.append('codigo_ium', codigo_ium);
+        formData.append('nivel1_ium', iumnivel1_det);
+        formData.append('nivel2_ium', iumnivel2_det);
+        formData.append('nivel3_ium', iumnivel3_det);
+
+        const respuesta = await fetch('procesos/crud_repodetalle.php', {
+            method: 'POST',
+            body: formData
+        });
+
+        const datos = await respuesta.text(); // Cambié de respuesta() a respuesta.text()
+        alertify.success(datos);
+        
+        return datos;
+    
+    } catch (error) {
+        console.error('Error:', error);
+        alertify.error('Error al guardar el medicamento');
+        return null;
+    }
+}
+
 </script>
 
 <script type="text/javascript">

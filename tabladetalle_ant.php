@@ -1,59 +1,51 @@
 <?php
 session_start();
-header("Cache-Control: no-cache, must-revalidate");
-header("Expires: Sat, 1 Jul 2000 05:00:00 GMT");
+//Aqui evito la utilizacion de cache con fines de refrescar tablas
+header("Cache-Control: no-cache, must-revalidate"); // HTTP/1.1
+header("Expires: Sat, 1 Jul 2000 05:00:00 GMT"); // Fecha en el pasado
+$condicion = "id_reporte='$_SESSION[gid_reporte]'";
 
-// Leer JSON enviado por AJAX
-$input = json_decode(file_get_contents("php://input"), true);
-
-$condicion = "id_reporte='" . $_SESSION['gid_reporte'] . "'";
-
-if (!empty($input['factura'])) {
-    $condicion .= " AND numerofact_det = '" . $input['factura'] . "'";
+if(isset($_GET['factura_']) and $_GET['factura_'] != ""){
+	$condicion = $condicion." AND numerofact_det = '$_GET[factura_]'";
 }
 
-if (!empty($input['fecha_'])) {
-    $condicion .= " AND fechafact_det = '" . $input['fecha_'] . "'";
+if(isset($_GET['fecha_']) and $_GET['fecha_'] != ""){
+	$condicion = $condicion." AND fechafact_det = '$_GET[fecha_]'";
 }
 
-if (!empty($input['operacion_'])) {
-    $condicion .= " AND tipo_operacion_det = '" . $input['operacion_'] . "'";
+if(isset($_GET['operacion_']) and $_GET['operacion_'] != ""){
+	$condicion = $condicion." AND tipo_operacion_det = '$_GET[operacion_]'";
 }
 
-if (!empty($input['iumN1_'])) {
-    $condicion .= " AND iumnivel1_det = '" . $input['iumN1_'] . "'";
+if(isset($_GET['iumN1_']) and $_GET['iumN1_'] != ""){
+	$condicion = $condicion." AND iumnivel1_det = '$_GET[iumN1_]'";
 }
 
-if (!empty($input['iumN2_'])) {
-    $condicion .= " AND iumnivel2_det = '" . $input['iumN2_'] . "'";
+if(isset($_GET['iumN2_']) and $_GET['iumN2_'] != ""){
+	$condicion = $condicion." AND iumnivel2_det = '$_GET[iumN2_]'";
 }
 
-if (!empty($input['iumN3_'])) {
-    $condicion .= " AND iumnivel3_det = '" . $input['iumN3_'] . "'";
+if(isset($_GET['iumN3_']) and $_GET['iumN3_'] != ""){
+	$condicion = $condicion." AND iumnivel3_det = '$_GET[iumN3_]'";
 }
 
-if (!empty($input['expediente_'])) {
-    $condicion .= " AND expediente_det = '" . $input['expediente_'] . "'";
+if(isset($_GET['expediente_']) and $_GET['expediente_'] != ""){
+	$condicion = $condicion." AND expediente_det = '$_GET[expediente_]'";
 }
-//echo $condicion;
+
 require_once "clases/conexion.php";
 require("procesos/mn_funciones.php");
-$obj = new conectar();
-$conexion = $obj->conexion();
+$obj=new conectar();
+$conexion=$obj->conexion();
 
-$consfecha = "SELECT fecha_ini_rep,fecha_fin_rep FROM reporte WHERE id_reporte='" . $_SESSION['gid_reporte'] . "'";
-$consfecha = mysqli_query($conexion, $consfecha);
-$rowfecha = mysqli_fetch_row($consfecha);
-$fecha_ini = $rowfecha[0];
-$fecha_fin = $rowfecha[1];
-
-$sql = "SELECT id_detalle,id_reporte,numerofact_det,fechafact_det,tipo_operacion_desc,tipo_transaccion_desc,
-        iumnivel1_det,iumnivel2_det,iumnivel3_det,expediente_det,exped_consec_det,unidad_desc,cantidad_det,
-        valor_unit_det,total 
-        FROM vw_reporte_detalle_tot 
-        WHERE $condicion ORDER BY numerofact_det DESC";
-
-$result = mysqli_query($conexion, $sql);
+$consfecha="SELECT fecha_ini_rep,fecha_fin_rep FROM reporte WHERE id_reporte='$_SESSION[gid_reporte]'";
+$consfecha=mysqli_query($conexion,$consfecha);
+$rowfecha=mysqli_fetch_row($consfecha);
+$fecha_ini=$rowfecha[0];
+$fecha_fin=$rowfecha[1];
+$sql="SELECT id_detalle,id_reporte,numerofact_det,fechafact_det,tipo_operacion_desc,tipo_transaccion_desc,iumnivel1_det,iumnivel2_det,iumnivel3_det,expediente_det,exped_consec_det,unidad_desc,cantidad_det,valor_unit_det,total 
+FROM vw_reporte_detalle_tot 
+WHERE $condicion";
 //echo "<br>".$sql;
 $result=mysqli_query($conexion,$sql);
 
@@ -87,9 +79,9 @@ $result=mysqli_query($conexion,$sql);
 
 		<tbody style="background-color: white">
 			<?php
-			while($row=mysqli_fetch_array($result)){
+			while($row=mysqli_fetch_row($result)){
 				$descripcion_ium="";
-				$codigo_ium=$row['iumnivel1_det'].$row['iumnivel2_det'].$row['iumnivel3_det'];
+				$codigo_ium=$row[6].$row[7].$row[8];
 				$sqlium="SELECT descripcion FROM vw_ium WHERE codigo_ium='$codigo_ium'";
 				$resultium=mysqli_query($conexion,$sqlium);
 				if(mysqli_num_rows($resultium)<>0){
@@ -98,18 +90,14 @@ $result=mysqli_query($conexion,$sql);
 				}
 
 				$descripcion_cum="";
-
-				if(!empty($row['expediente_det']) and !empty($row['unidad_desc'])){
-				    $sqlcum = "SELECT descripcion 
-                       FROM vw_cum 
-                       WHERE codigo_cum = CONCAT('" . $row['expediente_det'] . "', '-', '" . $row['unidad_desc'] . "')";
+				if(!empty($row[9]) and !empty($row[10])){
+					$sqlcum="SELECT descripcion FROM vw_cum WHERE codigo_cum=CONCAT($row[9],'-',$row[10])";
 					$resultcum=mysqli_query($conexion,$sqlcum);
 					if(mysqli_num_rows($resultcum)<>0){
 						$rowcum=mysqli_fetch_row($resultcum);
 						$descripcion_cum=$rowcum[0];
 					}
-				}
-				
+				}				
 				?>
 				<tr>
 					<td><?php echo $row[2];?></td>

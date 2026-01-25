@@ -269,8 +269,8 @@ require_once "clases/conexion.php";
     $(document).ready(function(){
         $("#btnNuevo").click(function(){
             /* Aqui valido si el medicamento existe*/
-            validarMedicamento();
-
+            validarMedicamentoIum();
+            validarMedicamentoCums();
 
             $('#fechafact_det').val($('#fechafact').val());            
             fechafac_=new Date($('#fechafact').val());
@@ -281,10 +281,14 @@ require_once "clases/conexion.php";
                 $.ajax({
                     type:"POST",
                     data:datos,
-                    url:"_procesos/agregardetalle.php",
+                    url:"procesos/agregardetalle.php",
                     success:function(r){
                         if(r==1){
                             alertify.success("Registro guardado");
+                            setTimeout(() => {
+
+                            }, 1000);
+                             
                             //$('#frm_nuevo')[0].reset();
                             $('#medicamento_ium').val("");
                             $('#iumnivel1_det').val("");
@@ -360,7 +364,7 @@ require_once "clases/conexion.php";
             });
     }
 
-    async function validarMedicamento(){
+    async function validarMedicamentoIum(){
         var codigo_ium = document.getElementById("iumnivel1_det").value +
                         document.getElementById("iumnivel2_det").value +
                         document.getElementById("iumnivel3_det").value;
@@ -377,7 +381,7 @@ require_once "clases/conexion.php";
             const datos = await respuesta.json();
 
             if (datos === null && confirm("El código IUM no existe. ¿Desea crearlo?")) {
-                guardarNuevoMedicamento();
+                guardarNuevoMedicamentoIUM();
                 return null;
             }
         
@@ -387,7 +391,7 @@ require_once "clases/conexion.php";
         }
     }
 
-    async function guardarNuevoMedicamento(){
+    async function guardarNuevoMedicamentoIUM(){
     let nombre_ium = document.getElementById("medicamento_ium").value;
     let codigo_ium = document.getElementById("iumnivel1_det").value +
                     document.getElementById("iumnivel2_det").value + 
@@ -411,17 +415,77 @@ require_once "clases/conexion.php";
             body: formData
         });
 
-        const datos = await respuesta.text(); // Cambié de respuesta() a respuesta.text()
+        const datos = await respuesta.text(); 
         alertify.success(datos);
         
         return datos;
     
-    } catch (error) {
-        console.error('Error:', error);
-        alertify.error('Error al guardar el medicamento');
-        return null;
+        } catch (error) {
+            console.error('Error:', error);
+            alertify.error('Error al guardar el medicamento');
+            return null;
+        }
     }
-}
+
+    async function validarMedicamentoCums(){
+        var codigo_cum = document.getElementById("expediente_det").value +'-'+
+                        document.getElementById("exped_consec_det").value;
+        //alert(codigo_cum);
+        if (codigo_cum ==='-') {
+            //alert("El codigo no se guarda")
+            return true;
+        }
+        try {
+            var opcion = 'consultar_cum';
+            const url = 'procesos/crud_repodetalle.php?opcion=' + opcion +
+                        '&codigo_cum=' + codigo_cum;
+
+            const respuesta = await fetch(url);
+            const datos = await respuesta.json();
+
+            if (datos === null && confirm("El código CUM no existe. ¿Desea crearlo?")) {
+                guardarNuevoMedicamentoCUM();
+                return null;
+            }
+        
+        } catch (error) {
+            console.error('Error:', error);
+            return null;
+        }
+    }
+
+    async function guardarNuevoMedicamentoCUM(){
+        let producto_cum = document.getElementById("medicamento_cum").value;
+        let codigo_cum = document.getElementById("expediente_det").value +'-'+
+                    document.getElementById("exped_consec_det").value;
+        let expediente_cum = document.getElementById("expediente_det").value;
+        let consecutivo_cum = document.getElementById("exped_consec_det").value;
+
+        try {
+            // Crear el objeto FormData
+            const formData = new FormData();
+            formData.append('opcion', 'nuevo_cum');
+            formData.append('producto_cum', producto_cum);
+            formData.append('codigo_cum', codigo_cum);
+            formData.append('expediente_cum', expediente_cum);
+            formData.append('consecutivo_cum', consecutivo_cum);
+
+            const respuesta = await fetch('procesos/crud_repodetalle.php', {
+                method: 'POST',
+                body: formData
+            });
+
+            const datos = await respuesta.text(); 
+            alertify.success(datos);
+            
+            return datos;
+        
+            } catch (error) {
+                console.error('Error:', error);
+                alertify.error('Error al guardar el medicamento');
+                return null;
+            }
+    }
 
 </script>
 
@@ -506,7 +570,7 @@ require_once "clases/conexion.php";
         });
     });
 
-    function filtrar(){
+    /*function filtrar(){
         var factura_ = document.getElementById("factura_").value;
         var fecha_ = document.getElementById("fecha_").value;
         var operacion_ = document.getElementById("operacion_").value;
@@ -524,5 +588,32 @@ require_once "clases/conexion.php";
         +"&expediente_="+expediente_;
 
         $("#tablaDatadetalle").load(url);
+    }*/
+
+    function filtrar() {
+    var datos = {
+        factura_: document.getElementById("factura_").value,
+        fecha_: document.getElementById("fecha_").value,
+        operacion_: document.getElementById("operacion_").value,
+        iumN1_: document.getElementById("iumN1_").value,
+        iumN2_: document.getElementById("iumN2_").value,
+        iumN3_: document.getElementById("iumN3_").value,
+        expediente_: document.getElementById("expediente_").value
+    };
+    //alert();
+    //console.log(datos);
+    $.ajax({
+        url: "tabladetalle.php",
+        type: "POST",
+        data: JSON.stringify(datos),
+        contentType: "application/json",
+        success: function(respuesta) {
+            $("#tablaDatadetalle").html(respuesta);
+        },
+        error: function(xhr, status, error) {
+            console.error("Error en la petición:", error);
+        }
+        });
     }
+
 </script>

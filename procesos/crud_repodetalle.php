@@ -18,7 +18,14 @@ switch ($opcion) {
     case 'nuevo_ium':
         echo nuevo_ium($_POST);
         break;
-
+    case 'consultar_cum':
+        $codigo_cum = $_GET['codigo_cum'];
+        echo consultar_cum($codigo_cum);
+        break;
+    case 'nuevo_cum':
+        echo nuevo_cum($_POST);
+        break;
+        
     default:
         echo "Opción no válida.";
         break;
@@ -33,7 +40,6 @@ function consultar_ium($codigo_ium){
     WHERE codigo_ium='$codigo_ium'";
     //echo "<pre>".$sql;
     $con=mysqli_query($conexion,$sql);
-    //$ver=mysqli_fetch_row($row);
     $datos = mysqli_fetch_array($con);
     return json_encode($datos);
 }
@@ -53,6 +59,40 @@ function nuevo_ium($data){
     
     if ($resultado && mysqli_affected_rows($conexion) > 0){
         $msj = "IUM agregado correctamente";
+    } else {
+        $msj = "Error al agregar IUM: " . mysqli_error($conexion);
+    }
+    
+    return $msj;
+}
+
+function consultar_cum($codigo_cum){
+    $obj=new conectar();
+    //echo $codigo_cum;
+    $conexion=$obj->conexion();
+    $sql="SELECT id_cums ,codigo_cum ,expediente_cum ,producto_cum ,consecutivo_cum 
+    FROM cums cu
+    WHERE cu.codigo_cum = '$codigo_cum'";
+    //echo "<pre>".$sql;
+    $con=mysqli_query($conexion,$sql);
+    $datos = mysqli_fetch_array($con);
+    return json_encode($datos);
+}
+
+function nuevo_cum($data){
+    $obj=new conectar();
+    $conexion=$obj->conexion();
+    
+    $sql="INSERT INTO cums(codigo_cum,expediente_cum,producto_cum,consecutivo_cum)
+          VALUES('$data[codigo_cum]',
+                 '$data[expediente_cum]',
+                 '$data[producto_cum]',
+                 '$data[consecutivo_cum]')";
+    //echo $sql;
+    $resultado = mysqli_query($conexion, $sql);
+    
+    if ($resultado && mysqli_affected_rows($conexion) > 0){
+        $msj = "CUM agregado correctamente";
     } else {
         $msj = "Error al agregar IUM: " . mysqli_error($conexion);
     }

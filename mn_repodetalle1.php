@@ -570,26 +570,6 @@ require_once "clases/conexion.php";
         });
     });
 
-    /*function filtrar(){
-        var factura_ = document.getElementById("factura_").value;
-        var fecha_ = document.getElementById("fecha_").value;
-        var operacion_ = document.getElementById("operacion_").value;
-        var iumN1_ = document.getElementById("iumN1_").value;
-        var iumN2_ = document.getElementById("iumN2_").value;
-        var iumN3_ = document.getElementById("iumN3_").value;
-        var iumN3_ = document.getElementById("iumN3_").value;
-        var expediente_ = document.getElementById("expediente_").value;
-        var url="tabladetalle.php?factura_="+factura_
-        +"&fecha_="+fecha_
-        +"&operacion_="+operacion_
-        +"&iumN1_="+iumN1_
-        +"&iumN2_="+iumN2_
-        +"&iumN3_="+iumN3_
-        +"&expediente_="+expediente_;
-
-        $("#tablaDatadetalle").load(url);
-    }*/
-
     function filtrar() {
     var datos = {
         factura_: document.getElementById("factura_").value,

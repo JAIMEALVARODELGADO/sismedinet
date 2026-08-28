@@ -55,8 +55,6 @@ $fecha_fin = $rowfecha[1];
 
 
 $sql = "SELECT id_detalle,id_reporte,numerofact_det,fechafact_det
-
-
 FROM reporte_detalle021 
 WHERE $condicion ORDER BY numerofact_det DESC";
 echo "<br>".$sql;
@@ -179,7 +177,7 @@ $result=mysqli_query($conexion,$sql);
 </div>
 
 <script type="text/javascript">
-	$(document).ready(function() {
-		$('#tabladetalle').DataTable();		
-	} );
+	/*$(document).ready(function() {
+		$('#tabladetalle21').DataTable();		
+	} );*/
 </script>

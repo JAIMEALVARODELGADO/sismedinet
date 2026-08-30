@@ -72,7 +72,7 @@ require_once "clases/conexion.php";
                     </div>
 
                     <div class="card-body">
-                        <span class="btn btn-secondary openBtn" data-toggle="modal" data-target="#nuevodetalle" title="Agrega Nuevo Registro">
+                        <span class="btn btn-secondary openBtn" data-toggle="modal" data-target="#nuevodetalle" title="Agrega Nuevo Registro" onclick="nuevoRegistro()">
                             Nuevo <span class="fas fa-plus-circle"></span>
                         </span>
                         <hr>
@@ -87,7 +87,7 @@ require_once "clases/conexion.php";
     </div>
 
     <!-- Modal Nuevo -->
-    <div class="modal fade" id="nuevodetalle" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal fade" id="nuevodetalle" name='nuevodetalle' tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
@@ -98,7 +98,8 @@ require_once "clases/conexion.php";
                 </div>
                 <div class="modal-body">
                     <form id="frm_nuevo">
-                    <label>Municipio FEV</label>
+                        <input type="hidden" class="form-control input-sm" id="id_detalle" name="id_detalle"> 
+                        <label>Municipio FEV</label>
                         <select class="form-control" id="municipio" name="municipio">
                             <option value=""></option>
                             <?php
@@ -118,7 +119,7 @@ require_once "clases/conexion.php";
                         <label>Número de la Factura FEV</label>
                         <input type="text" maxlength="20" class="form-control input-sm" id="numerofact_det" name="numerofact_det">
                         <label>Fecha de emisión de la Factura</label>
-                        <input type="date" class="form-control input-sm" id="fechafact" name="fechafact">                        
+                        <input type="date" class="form-control input-sm" id="fechafact" name="fechafact">
                         <label>Código del detalle del producto en FEV</label>
                         <input type="text" maxlength="50" class="form-control input-sm" id="codigo_detalle" name="codigo_detalle">
                         <label>Unidad de medida en FEV</label>
@@ -192,103 +193,17 @@ require_once "clases/conexion.php";
                         <label>Total de unidades facturadas en unidades minimas de dispensación</label>
                         <input type="number" maxlength="16" class="form-control input-sm" id="total_unidades_fac" name="total_unidades_fac">
                         
-                        <!--<input type="hidden" name="fechafact_det" id="fechafact_det">-->
                     </form>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar <span class="fas fa-angle-double-left"></span></button>
+                    <button type="button" id="btnCerrarModal" class="btn btn-secondary" data-dismiss="modal">Cerrar <span class="fas fa-angle-double-left"></span></button>
                     <button type="button" id="btnGuardar" class="btn btn-primary">Guardar <span class="fas fa-save"></span></button>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Modal Editar-->
-    <div class="modal fade" id="modalEditar" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Editar Registro</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <form id="frm_editar">
-                        <input type="hidden" id="id_detalle" name="id_detalle">
-                        <label>Número de la Factura</label>
-                        <input type="text" maxlength="20" class="form-control input-sm" id="numerofact_detU" name="numerofact_detU">
-                        <label>Fecha de la Factura</label>
-                        <input type="date" class="form-control input-sm" id="fechafactU" name="fechafactU">
-                        <label>Tipo de Operación</label>
-                        <select class="form-control" id="tipo_operacion_detU" name="tipo_operacion_detU">
-                            <option value=""></option>
-                            <?php
-                            $sql="SELECT codi_det,descripcion_det FROM vw_tpoperacion ORDER BY codi_det";
-                            $result=mysqli_query($conexion,$sql);
-                            $listas="<option value=''></option>";
-                            while($row=mysqli_fetch_row($result)){
-                                echo "<option value='$row[0]'>$row[1]</option>";
-                            }
-                            ?>
-                        </select>
-                        <label>Tipo de Transacción</label>
-                        <select class="form-control" id="tipo_transaccio_detU" name="tipo_transaccio_detU">
-                            <option value=""></option>
-                            <?php
-                            $sql="SELECT codi_det,descripcion_det FROM vw_tptransaccion ORDER BY codi_det";
-                            $result=mysqli_query($conexion,$sql);
-                            $listas="<option value=''></option>";
-                            while($row=mysqli_fetch_row($result)){
-                                echo "<option value='$row[0]'>$row[1]</option>";
-                            }
-                            ?>
-                        </select>
-                        <label>Medicamento según IUM</label>
-                        <input type="text" maxlength="120" class="form-control input-sm" id="medicamento_iumU" name="medicamento_iumU">
-                        <label>IUM de Primer Nivel</label>
-                        <input type="text" maxlength="8" class="form-control input-sm" id="iumnivel1_detU" name="iumnivel1_detU">
-                        <label>IUM de Segundo Nivel</label>
-                        <input type="text" maxlength="4" class="form-control input-sm" id="iumnivel2_detU" name="iumnivel2_detU">
-                        <label>IUM de Tercer Nivel</label>
-                        <input type="text" maxlength="3" class="form-control input-sm" id="iumnivel3_detU" name="iumnivel3_detU">
-                        <label>Medicamento según CUM</label>
-                        <input type="text" maxlength="120" class="form-control input-sm" id="medicamento_cumU" name="medicamento_cumU">
-                        <label>Expediente</label>
-                        <input type="text" maxlength="8" class="form-control input-sm" id="expediente_detU" name="expediente_detU">
-                        <label>Consecutivo</label>
-                        <input type="text" maxlength="3" class="form-control input-sm" id="exped_consec_detU" name="exped_consec_detU">
-                        </select>
-                        <label>Unidad en la que se factura</label>
-                        <select class="form-control" id="unidad_detU" name="unidad_detU">
-                            <option value=""></option>
-                            <?php
-                            $sql="SELECT codi_det,descripcion_det FROM vw_unidad ORDER BY codi_det";
-                            $result=mysqli_query($conexion,$sql);
-                            $listas="<option value=''></option>";
-                            while($row=mysqli_fetch_row($result)){
-                                echo "<option value='$row[0]'>$row[1]</option>";
-                            }
-                            ?>
-                        </select>
-                        <label>Cantidad</label>
-                        <input type="text" maxlength="16" class="form-control input-sm" id="cantidad_detU" name="cantidad_detU">
-                        <label>Valor Unitario</label>
-                        <input type="text" maxlength="16" class="form-control input-sm" id="valor_unit_detU" name="valor_unit_detU">
-                        <input type="hidden" name="fechafact_detU" id="fechafact_detU">
-                    </form>
-
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar <span class="fas fa-angle-double-left"></span></button>
-                    <button type="button" class="btn btn-primary" id="btnActualizar">Guardar <span class="fas fa-save"></span></button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <input type="hidden" name="fecha_ini" id="fecha_ini">
-    <input type="hidden" name="fecha_fin" id="fecha_fin">
+    
 </body>
 
 </html>
@@ -303,7 +218,7 @@ require_once "clases/conexion.php";
     $(document).ready(function(){
         
 
-        $('#btnActualizar').click(function(){
+        /*$('#btnActualizar').click(function(){
             $('#fechafact_detU').val($('#fechafactU').val());            
             fechafac_=new Date($('#fechafactU').val());
             fechaini_=new Date($('#fecha_ini').val());
@@ -328,11 +243,11 @@ require_once "clases/conexion.php";
             else{
                 alertify.error("Fecha de la factura fuera de rango");
             }
-        });
+        });*/
 
     }); 
 
-    function eliminarDatos(iddetalle,descripcion){
+    /*function eliminarDatos(iddetalle,descripcion){
         alertify.confirm('Eliminar Registro', 'Desea Eliminar este expediente? '+descripcion, 
             function(){ 
                 $.ajax({
@@ -353,7 +268,7 @@ require_once "clases/conexion.php";
             ,function(){
 
             });
-    }
+    }*/
 
     
 
@@ -431,7 +346,7 @@ require_once "clases/conexion.php";
 </script>
 
 <script type="text/javascript">
-    function agregaFrmActualizar(iddetalle){        
+    /*function agregaFrmActualizar(iddetalle){        
         $.ajax({
             type:"POST",
             data:"iddetalle="+iddetalle,
@@ -458,7 +373,7 @@ require_once "clases/conexion.php";
 
             }
         })
-    }
+    }*/
 
 </script>
 

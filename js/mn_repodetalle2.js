@@ -20,38 +20,66 @@ document.addEventListener("DOMContentLoaded", function () {
         /* Aqui valido si el medicamento existe*/
         //validarMedicamentoIum();
         //validarMedicamentoCums();
-        
                     
         fechafac_=new Date($('#fechafact').val());
-        fechaini_=new Date($('#fecha_ini').val());
-        fechafin_=new Date($('#fecha_fin').val());
-       
+        fechaini_=new Date(fecha_ini);
+        fechafin_=new Date(fecha_fin);
+
+        id_detalle = $("#id_detalle").val();
+        if(id_detalle === '') {
+            opcion = 'guardarDetalle';
+        } else {
+            opcion = 'editarDetalle';
+        }
+
         if (Date.parse(fechafac_) >= Date.parse(fechaini_) && Date.parse(fechafac_) <= Date.parse(fechafin_)){
-            var datos = $('#frm_nuevo').serialize() + '&opcion=guardarDetalle';
-            
+            var datos = {
+                id_detalle: $("#id_detalle").val(),
+                municipio: $("#municipio").val(),
+                cufe: $("#cufe").val(),
+                numerofact_det: $("#numerofact_det").val(),
+                fechafact: $("#fechafact").val(),
+                codigo_detalle: $("#codigo_detalle").val(),
+                unidad_medida: $("#unidad_medida").val(),
+                cantidad: $("#cantidad").val(),
+                precio_und: $("#precio_und").val(),
+                documento_soporte: $("#documento_soporte").val(),
+                total_facturado: $("#total_facturado").val(),
+                nit_entidad_operacion: $("#nit_entidad_operacion").val(),
+                municipio_operacion: $("#municipio_operacion").val(),
+                tipo_operacion: $("#tipo_operacion").val(),
+                tipo_transaccion: $("#tipo_transaccion").val(),
+                medicamento_ium: $("#medicamento_ium").val(),
+                iumnivel1: $("#iumnivel1").val(),
+                iumnivel2: $("#iumnivel2").val(),
+                iumnivel3: $("#iumnivel3").val(),
+                medicamento_cum: $("#medicamento_cum").val(),
+                expediente: $("#expediente").val(),
+                presentacion_comercial: $("#presentacion_comercial").val(),
+                total_unidades_fac: $("#total_unidades_fac").val(),
+                opcion: opcion
+              };
+              
             $.ajax({
                 type:"POST",
-                data:datos,
+                data: JSON.stringify(datos),
                 url:"procesos/cruddetalle2.php",
+                contentType: "application/json",
                 success:function(r){
                     if(r==1){
                         alertify.success("Registro guardado");
+
                         setTimeout(() => {
 
                         }, 1000);
                          
-                        //$('#frm_nuevo')[0].reset();
-                        $('#medicamento_ium').val("");
-                        $('#iumnivel1_det').val("");
-                        $('#iumnivel2_det').val("");
-                        $('#iumnivel3_det').val("");
-                        $('#medicamento_cum').val("");
-                        $('#expediente_det').val("");
-                        $('#exped_consec_det').val("");
-                        $('#unidad_det').val("");
-                        $('#cantidad_det').val("");
-                        $('#valor_unit_det').val("");
-                        $("#tablaDatadetalle").load("tabladetalle.php");                            
+                        $('#frm_nuevo')[0].reset();
+                        
+                        $("#tablaDatadetalle").load("tabladetalle21.php");
+                        
+                        // Cierra el modal
+                        document.getElementById("btnCerrarModal").click();
+
                     }
                     else{
                         alertify.error("Error: Registro no guardado");
@@ -118,4 +146,104 @@ async function validarMedicamentoCums(){
         console.error('Error:', error);
         return null;
     }
+}
+
+function nuevoRegistro(){
+    var opcion = 'consultarUltimoRegistro';
+
+    var datos = {
+        
+        opcion: opcion
+      };
+
+    $.ajax({
+        type:"POST",
+        data: JSON.stringify(datos),
+        url:"procesos/cruddetalle2.php",
+        contentType: "application/json",
+        success:function(r){
+            if(r) {
+                var registro = JSON.parse(r);
+                $('#municipio').val(registro.municipio);
+                $('#cufe').val(registro.cufe);
+                $('#numerofact_det').val(registro.numerofact_det);
+                $('#fechafact').val(registro.fechafact);
+                $('#nit_entidad_operacion').val(registro.nit_entidad_operacion);
+                $('#municipio_operacion').val(registro.municipio_operacion);
+                $('#tipo_operacion').val(registro.tipo_operacion);
+                $("#tipo_transaccion").val(registro.tipo_transaccion);
+            }
+        }
+    });  
+
+}
+
+function consultarRegistro(id_detalle,descripcion_ium,descripcion_cum){
+    var opcion = 'consultarRegistro';
+    var datos = {
+        id_detalle: id_detalle,
+        opcion: opcion
+      };
+    
+    $('#medicamento_ium').val(descripcion_ium);
+    $('#medicamento_cum').val(descripcion_cum);
+
+    $.ajax({
+        type:"POST",
+        data: JSON.stringify(datos),
+        url:"procesos/cruddetalle2.php",
+        contentType: "application/json",
+        success:function(r){
+            if(r) {
+                var registro = JSON.parse(r);
+                $('#id_detalle').val(registro.id_detalle);
+                $('#municipio').val(registro.municipio);
+                $('#cufe').val(registro.cufe);
+                $('#numerofact_det').val(registro.numerofact_det);
+                $('#fechafact').val(registro.fechafact);
+                $('#codigo_detalle').val(registro.codigo_detalle);
+                $('#unidad_medida').val(registro.unidad_medida);
+                $('#cantidad').val(registro.cantidad);
+                $('#precio_und').val(registro.precio_und);
+                $('#documento_soporte').val(registro.documento_soporte);
+                $('#nit_entidad_operacion').val(registro.nit_entidad_operacion);
+                $('#municipio_operacion').val(registro.municipio_operacion);
+                $('#tipo_operacion').val(registro.tipo_operacion);
+                $("#tipo_transaccion").val(registro.tipo_transaccion);
+                $('#iumnivel1').val(registro.iumnivel1);
+                $('#iumnivel2').val(registro.iumnivel2);
+                $('#iumnivel3').val(registro.iumnivel3);
+                $('#expediente').val(registro.expediente);
+                $('#presentacion_comercial').val(registro.presentacion_comercial);
+                $('#total_unidades_fac').val(registro.total_unidades_fac);
+            }
+        }
+    });
+}
+
+function eliminarRegistro(id_detalle,descripcion){
+    
+        var opcion = 'eliminarDetalle';
+        var datos = {
+            id_detalle: id_detalle,
+            opcion: opcion
+        };
+        
+        if(confirm("¿Está seguro de eliminar el registro del medicamento: " + descripcion + "?")){
+            $.ajax({
+                type:"POST",
+                data: JSON.stringify(datos),
+                url:"procesos/cruddetalle2.php",
+                contentType: "application/json",
+                success:function(r){
+                    if(r==1){
+                        alertify.success("Registro eliminado");
+                        $("#tablaDatadetalle").load("tabladetalle21.php");
+                    }
+                    else{
+                        alertify.error("Error: Registro no eliminado");
+                    }
+                }
+            });
+        }
 }

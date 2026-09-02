@@ -97,6 +97,7 @@ $consecutivo--;
 $control=$control.$consecutivo."|";
 $consultamed="SELECT codigo_cum FROM vw_reporte_sismed WHERE id_reporte='$_SESSION[gid_reporte]'
 GROUP BY codigo_cum";
+//echo $consultamed;
 $consultamed=mysqli_query($conexion,$consultamed);
 $cantidadmed=mysqli_num_rows($consultamed);
 $control=$control.$cantidadmed."\r\n";

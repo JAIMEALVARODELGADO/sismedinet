@@ -8,32 +8,32 @@ $input = json_decode(file_get_contents("php://input"), true);
 
 $condicion = "id_reporte='" . $_SESSION['gid_reporte'] . "'";
 
-if (!empty($input['factura'])) {
-    $condicion .= " AND numerofact_det = '" . $input['factura'] . "'";
+if (!empty($input['factura_'])) {
+    $condicion .= " AND numerofact_det = '" . $input['factura_'] . "'";
 }
 
 if (!empty($input['fecha_'])) {
-    $condicion .= " AND fechafact_det = '" . $input['fecha_'] . "'";
+    $condicion .= " AND fechafact = '" . $input['fecha_'] . "'";
 }
 
 if (!empty($input['operacion_'])) {
-    $condicion .= " AND tipo_operacion_det = '" . $input['operacion_'] . "'";
+    $condicion .= " AND tipo_operacion = '" . $input['operacion_'] . "'";
 }
 
 if (!empty($input['iumN1_'])) {
-    $condicion .= " AND iumnivel1_det = '" . $input['iumN1_'] . "'";
+    $condicion .= " AND iumnivel1 = '" . $input['iumN1_'] . "'";
 }
 
 if (!empty($input['iumN2_'])) {
-    $condicion .= " AND iumnivel2_det = '" . $input['iumN2_'] . "'";
+    $condicion .= " AND iumnivel2 = '" . $input['iumN2_'] . "'";
 }
 
 if (!empty($input['iumN3_'])) {
-    $condicion .= " AND iumnivel3_det = '" . $input['iumN3_'] . "'";
+    $condicion .= " AND iumnivel3 = '" . $input['iumN3_'] . "'";
 }
 
 if (!empty($input['expediente_'])) {
-    $condicion .= " AND expediente_det = '" . $input['expediente_'] . "'";
+    $condicion .= " AND expediente = '" . $input['expediente_'] . "'";
 }
 //echo $condicion;
 require_once "clases/conexion.php";
@@ -56,7 +56,7 @@ FROM reporte_detalle021 rp
 INNER JOIN vw_tpoperacion tp ON rp.tipo_operacion = tp.codi_det 
 INNER JOIN vw_tptransaccion tt ON rp.tipo_transaccion = tt.codi_det
 WHERE $condicion ORDER BY rp.numerofact_det DESC";
-print_r($sql);
+//print_r($sql);
 
 $result=mysqli_query($conexion,$sql);
 
@@ -150,8 +150,3 @@ $result=mysqli_query($conexion,$sql);
 	</table>
 </div>
 
-<script type="text/javascript">
-	/*$(document).ready(function() {
-		$('#tabladetalle').DataTable();		
-	} );*/
-</script>

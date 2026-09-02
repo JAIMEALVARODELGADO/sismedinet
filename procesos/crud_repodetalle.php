@@ -54,7 +54,7 @@ function nuevo_ium($data){
                  '$data[nivel1_ium]',
                  '$data[nivel2_ium]',
                  '$data[nivel3_ium]')";
-    
+    //echo $sql;
     $resultado = mysqli_query($conexion, $sql);
     
     if ($resultado && mysqli_affected_rows($conexion) > 0){
@@ -82,13 +82,15 @@ function consultar_cum($codigo_cum){
 function nuevo_cum($data){
     $obj=new conectar();
     $conexion=$obj->conexion();
-    
-    $sql="INSERT INTO cums(codigo_cum,expediente_cum,producto_cum,consecutivo_cum)
+    $descripcion=$data['codigo_cum'].' '.$data['producto_cum'];
+    $sql="INSERT INTO cums(codigo_cum,expediente_cum,producto_cum,consecutivo_cum,descripcion)
           VALUES('$data[codigo_cum]',
                  '$data[expediente_cum]',
                  '$data[producto_cum]',
-                 '$data[consecutivo_cum]')";
-    //echo $sql;
+                 '$data[consecutivo_cum]',
+                 '$descripcion')
+                 ";
+    echo $sql;
     $resultado = mysqli_query($conexion, $sql);
     
     if ($resultado && mysqli_affected_rows($conexion) > 0){
